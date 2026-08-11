@@ -182,9 +182,6 @@
 </div>
 
 <script>
-const SUPABASE_URL = 'https://udsvumfwczyormmprizm.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkc3Z1bWZ3Y3p5b3JtbXByaXptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTg1MzgsImV4cCI6MjA5NTM5NDUzOH0.h3MzXhUrIkwssCCwWSohg9l40weroZUP81NJ3PLIAxE';
-
 function formatearRut(valor) {
   let limpio = valor.replace(/[^0-9kK]/g, '').toUpperCase();
   if (limpio.length === 0) return '';
@@ -291,23 +288,14 @@ document.getElementById('form').addEventListener('submit', async function(e) {
   };
 
   try {
-    const resp = await fetch(SUPABASE_URL + '/rest/v1/trabajadores_rrhh', {
+    const resp = await fetch('https://mis-negocios-n8n.u7xiga.easypanel.host/webhook/nuevo-trabajador-rrhh', {
       method: 'POST',
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json',
-        Prefer: 'return=minimal'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
-
-    fetch('https://mis-negocios-n8n.u7xiga.easypanel.host/webhook/nuevo-trabajador-rrhh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre: body.nombre, apellido: body.apellido, negocio: body.negocio, rut: body.rut, email: body.email, telefono: body.telefono })
-    }).catch(() => {});
+    const data = await resp.json();
+    if (!data.ok) throw new Error(data.error || 'error desconocido');
 
     document.getElementById('card').innerHTML = `
       <div class="success2">
