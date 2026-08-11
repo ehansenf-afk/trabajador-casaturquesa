@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ficha de ingreso — Nuevo trabajador</title>
+<title>Ficha de ingreso — Casa Turquesa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -62,18 +62,12 @@
 <body>
 <div class="phone" id="card">
   <div class="hero">
-    <div class="hero-eyebrow">Recursos Humanos</div>
+    <div class="hero-eyebrow">Casa Turquesa · Recursos Humanos</div>
     <div class="hero-title">Ficha de ingreso</div>
     <div class="hero-sub">Completa tus datos personales para iniciar tu proceso de contratación. Una vez enviado, el equipo revisará tu ficha y coordinará los términos de tu contrato contigo.</div>
   </div>
   <div class="content">
     <form id="form">
-      <label>¿A qué negocio te unes?</label>
-      <select id="negocio" required>
-        <option value="turquesa">Casa Turquesa</option>
-        <option value="monkey">Monkey D Market</option>
-      </select>
-
       <div class="section-label">Datos personales</div>
       <div class="row2">
         <div>
@@ -182,6 +176,8 @@
 </div>
 
 <script>
+const NEGOCIO = 'turquesa';
+
 function formatearRut(valor) {
   let limpio = valor.replace(/[^0-9kK]/g, '').toUpperCase();
   if (limpio.length === 0) return '';
@@ -265,7 +261,7 @@ document.getElementById('form').addEventListener('submit', async function(e) {
 
   const codPais = document.getElementById('codPais').value;
   const body = {
-    negocio: document.getElementById('negocio').value,
+    negocio: NEGOCIO,
     nombre: document.getElementById('nombre').value.trim(),
     apellido: document.getElementById('apellido').value.trim(),
     rut: rut,
