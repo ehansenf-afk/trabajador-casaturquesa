@@ -323,7 +323,45 @@ function renderTurnoGrid() {
     '<tr><td>Entrada</td>' + DIAS_C.map((_,i)=>`<td><input type="time" class="tE" data-i="${i}"></td>`).join('') + '</tr>' +
     '<tr><td>Inicio col.</td>' + DIAS_C.map((_,i)=>`<td><input type="time" class="tColIni" data-i="${i}"></td>`).join('') + '</tr>' +
     '<tr><td>Fin col.</td>' + DIAS_C.map((_,i)=>`<td><input type="time" class="tColFin" data-i="${i}"></td>`).join('') + '</tr>' +
-    '<tr><td>Salida</td>' + DIAS_C.map((_,i)=>`<td><input type="time" class="tS" data-i="${i}"></td>`).join('') + '</tr></table>';
+    '<tr><td>Salida</td>' + DIAS_C.map((_,i)=>`<td><input type="time" class="tS" data-i="${i}"></td>`).join('') + '</tr>' +
+    '<tr><td>Horas</td>' + DIAS_C.map((_,i)=>`<td class="tHorasDia" data-i="${i}" style="font-weight:700;color:#10a89f;">–</td>`).join('') + '</tr></table>' +
+    '<div class="nota-turno" id="totalSemanal" style="font-weight:700;color:#1D252C;margin-top:6px;">Total semanal: 0 hrs</div>';
+  wrap.addEventListener("input", actualizarHorasVisual);
+  wrap.addEventListener("change", actualizarHorasVisual);
+  actualizarHorasVisual();
+}
+
+function horasDiaTurno(t) {
+  if (!t || !t.on || !t.e || !t.s) return 0;
+  const [eh, em] = t.e.split(":").map(Number);
+  const [sh, sm] = t.s.split(":").map(Number);
+  if ([eh,em,sh,sm].some(isNaN)) return 0;
+  let mins = (sh * 60 + sm) - (eh * 60 + em);
+  if (t.colIni && t.colFin) {
+    const [cih, cim] = t.colIni.split(":").map(Number);
+    const [cfh, cfm] = t.colFin.split(":").map(Number);
+    if (![cih,cim,cfh,cfm].some(isNaN)) mins -= (cfh * 60 + cfm) - (cih * 60 + cim);
+  }
+  return mins > 0 ? mins / 60 : 0;
+}
+
+function actualizarHorasVisual() {
+  let total = 0;
+  for (let i = 0; i < 7; i++) {
+    const dia = {
+      on: document.querySelector(`.tOn[data-i="${i}"]`).checked,
+      e: document.querySelector(`.tE[data-i="${i}"]`).value,
+      s: document.querySelector(`.tS[data-i="${i}"]`).value,
+      colIni: document.querySelector(`.tColIni[data-i="${i}"]`).value,
+      colFin: document.querySelector(`.tColFin[data-i="${i}"]`).value
+    };
+    const h = horasDiaTurno(dia);
+    total += h;
+    const celda = document.querySelector(`.tHorasDia[data-i="${i}"]`);
+    if (celda) celda.textContent = h > 0 ? (Number.isInteger(h) ? h : h.toFixed(1)) + "h" : "–";
+  }
+  const totalEl = document.getElementById("totalSemanal");
+  if (totalEl) totalEl.textContent = "Total semanal: " + (Number.isInteger(total) ? total : total.toFixed(1)) + " hrs";
 }
 
 function abrirFormulario(p) {
